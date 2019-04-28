@@ -7,6 +7,9 @@ class Stats:
         self.stopped = False
         self.points = 0
 
+    def bonus_points(self, points):
+        self.points += points
+
     def stop_game(self):
         self.stopped = True
 

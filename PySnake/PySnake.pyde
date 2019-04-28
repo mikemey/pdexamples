@@ -44,6 +44,7 @@ class GameMaster:
         self.serpent.next_step(self.food)
         if self.food.eaten:
             self.food.respawn(self.__freePoint__())
+            self.stats.bonus_points(FOOD_BONUS)
         if self.serpent.is_dead():
             noLoop()
             self.stats.stop_game()
