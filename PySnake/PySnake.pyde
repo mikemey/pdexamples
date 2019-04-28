@@ -6,7 +6,7 @@ from simple_objects import Background, Food
 
 
 def random_point():
-    return PVector(int(random(gridCoord(width))), int(random(gridCoord(height))))
+    return PVector(int(random(grid_coord(width))), int(random(grid_coord(height))))
 
 
 class GameMaster:
@@ -29,7 +29,7 @@ class GameMaster:
     def __freePoint__(self):
         while True:
             point = random_point()
-            if not self.walls.isPointInWalls(point) \
+            if not self.walls.is_point_in_walls(point) \
                     and not self.serpent.is_point_in_snake(point):
                 return point
 
@@ -42,16 +42,16 @@ class GameMaster:
 
     def __step__(self):
         self.serpent.next_step(self.food)
-        if self.food.wasEaten():
+        if self.food.eaten:
             self.food.respawn(self.__freePoint__())
-        if self.serpent.isDead():
+        if self.serpent.is_dead():
             noLoop()
-            self.stats.stopGame()
+            self.stats.stop_game()
         else:
-            self.stats.nextStep()
+            self.stats.next_step()
 
-    def new_direction(self, newDir):
-        self.serpent.set_direction(newDir)
+    def new_direction(self, new_dir):
+        self.serpent.set_direction(new_dir)
 
 
 gameMaster = GameMaster()

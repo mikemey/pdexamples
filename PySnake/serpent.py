@@ -21,34 +21,35 @@ class Serpent:
 
     def next_step(self, food):
         self.currentDir = self.nextDir
-        next_head = self.parts[0].offsetCopy(self.currentDir)
+        next_head = self.parts[0].offset_copy(self.currentDir)
         if self.__isNotEating__(next_head, food):
             self.parts.pop(len(self.parts) - 1)
-        self.__checkCollisions__(next_head.getPos())
+        self.__checkCollisions__(next_head.pos)
         self.parts.insert(0, next_head)
 
-    def __isNotEating__(self, head, food):
-        if head.getPos().dist(food.getPos()) == 0:
+    @staticmethod
+    def __isNotEating__(head, food):
+        if head.pos.dist(food.pos) == 0:
             food.eat()
             return False
         return True
 
-    def __checkCollisions__(self, headV):
-        if self.walls.isPointInWalls(headV) or self.is_point_in_snake(headV):
+    def __checkCollisions__(self, head_v):
+        if self.walls.is_point_in_walls(head_v) or self.is_point_in_snake(head_v):
             self.isAlive = False
 
-    def is_point_in_snake(self, pointV):
+    def is_point_in_snake(self, point_v):
         for part in self.parts:
-            if part.getPos().dist(pointV) == 0:
+            if part.pos.dist(point_v) == 0:
                 return True
         return False
 
-    def isDead(self):
+    def is_dead(self):
         return not self.isAlive
 
     def draw(self):
         ix = 0
         for part in self.parts:
             part.draw()
-            part.drawIndex(ix)
+            part.draw_index(ix)
             ix += 1

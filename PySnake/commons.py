@@ -17,11 +17,14 @@ COL_SERPENT = '#88ED77'
 COL_FOOD = '#33FD92'
 COL_SERPENT_TEXT = '#EE2277'
 
-def drawCoord(gridCoord):
-    return gridCoord * GRID_WIDTH
 
-def drawVector(gridCoord):
-    return gridCoord.copy().mult(GRID_WIDTH)
+def draw_coord(grid_val):
+    return grid_val * GRID_WIDTH
 
-def gridCoord(drawCoord):
-    return floor(drawCoord / GRID_WIDTH)
+
+def draw_vector(grid_v):
+    return grid_v.copy().mult(GRID_WIDTH)
+
+
+def grid_coord(draw_val):
+    return floor(draw_val / GRID_WIDTH)

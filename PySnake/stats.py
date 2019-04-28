@@ -1,15 +1,16 @@
 from commons import *
 
-class Stats():
+
+class Stats:
 
     def __init__(self):
         self.stopped = False
         self.points = 0
 
-    def stopGame(self):
+    def stop_game(self):
         self.stopped = True
 
-    def nextStep(self):
+    def next_step(self):
         self.points += 1
 
     def draw(self):
