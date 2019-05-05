@@ -8,7 +8,17 @@ def create_random_ball():
 
 class NRunner:
     def __init__(self):
-        self.balls = [create_random_ball() for _ in range(0, 50)]
+        # self.balls = [create_random_ball() for _ in range(0, 2)]
+        self.balls = [
+            Ball(PVector(130, 100), PVector(-0.4, 1)),
+            Ball(PVector(200, 150), PVector(-1.7, 0.2)),
+            create_random_ball(),
+            create_random_ball(),
+            create_random_ball(),
+            create_random_ball(),
+            create_random_ball(),
+            create_random_ball()
+        ]
 
     def setup(self):
         pass
