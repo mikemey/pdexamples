@@ -15,9 +15,9 @@ class NRunner:
             create_random_ball(),
             create_random_ball(),
             create_random_ball(),
-            create_random_ball(),
-            create_random_ball(),
-            create_random_ball()
+            # create_random_ball(),
+            # create_random_ball(),
+            # create_random_ball()
         ]
 
     def setup(self):

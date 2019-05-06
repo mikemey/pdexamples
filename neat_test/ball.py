@@ -3,16 +3,27 @@ from math import sqrt, atan, cos, tan
 from commons import *
 
 BALL_SQ_DISTANCE = BALL_DIAMETER * BALL_DIAMETER
-ZOOM = 50
+ZOOM = 100
+
+
+def __square_distance__(v1, v2):
+    dx, dy = __delta_xy__(v1, v2)
+    return dx * dx + dy * dy
+
+
+def __delta_xy__(v1, v2):
+    return v1.x - v2.x, v1.y - v2.y
 
 
 class Ball:
     def __init__(self, location_v, velocity_v):
         self.loc = location_v
         self.vel = velocity_v
+        self.highlight = False
 
     def next_position(self):
-        # self.vel.add(GRAVITY)
+        self.highlight = False
+        self.vel.add(GRAVITY)
         self.loc.add(self.vel)
         self.__check_boundaries__()
 
@@ -36,78 +47,51 @@ class Ball:
         self.vel.y *= y_fact
 
     def draw(self):
-        # fill('#88ED77')
         point(self.loc.x, self.loc.y)
         stroke(300, 155, 50)
         line(self.loc.x, self.loc.y, self.loc.x - ZOOM * self.vel.x, self.loc.y - ZOOM * self.vel.y)
+        if self.highlight:
+            stroke(60, 155, 50)
+            # fill('#88ED77')
         noFill()
         ellipse(self.loc.x, self.loc.y, BALL_DIAMETER, BALL_DIAMETER)
 
     def check_collision(self, other):
-        loc_dx = other.loc.x - self.loc.x
-        loc_dy = other.loc.y - self.loc.y
-        sq_dist = loc_dx * loc_dx + loc_dy * loc_dy
+        sq_dist = __square_distance__(other.loc, self.loc)
         if sq_dist < BALL_SQ_DISTANCE:
-            stroke(150, 40, 40)
-            line(self.loc.x, self.loc.y, other.loc.x, other.loc.y)
-            theta = atan(loc_dy / loc_dx)
-            # line(other.loc.x, other.loc.y, other.loc.x + ZOOM * self_impulse.x, other.loc.y + ZOOM * self_impulse.y)
-            # line(other.loc.x, other.loc.y, other.loc.x - ZOOM * other_impulse.x, other.loc.y - ZOOM * other_impulse.y)
+            self.highlight = True
+            other.highlight = True
+            d1 = abs(sqrt(sq_dist) - BALL_DIAMETER)
+            prev_loc = self.loc.copy().sub(self.vel)
+            prev_other_loc = other.loc.copy().sub(other.vel)
+            prev_sq_dist = __square_distance__(prev_other_loc, prev_loc)
+            d0 = abs(sqrt(prev_sq_dist) - BALL_DIAMETER)
+            tx = d1 / (d0 + d1)
 
-            a = BALL_DIAMETER
-            c = sqrt(sq_dist)
-            g12 = a - c
+            self.loc.sub(self.vel.copy().mult(tx))
+            other.loc.sub(other.vel.copy().mult(tx))
 
-            alpha = HALF_PI - other.vel.heading() + theta
-            beta = self.vel.heading() - theta
+            # line(self.loc.x, self.loc.y, other.loc.x, other.loc.y)
+            # dx, dy = __delta_xy__(self.loc, other.loc)
+            # unit_v = PVector(dy, dx)
+            # unit_v.normalize()
 
-            tan_alpha_beta = tan(alpha) / tan(beta)
-            b_v = g12 / cos(beta) * (1 - 1 / (1 + tan_alpha_beta))
-            self_loc_diff = self.vel.copy().setMag(b_v)
+            dx, dy = __delta_xy__(other.loc, self.loc)
+            unit_v = PVector(dx, dy)
+            unit_v.normalize()
+            other_impulse = unit_v.copy().setMag(other.vel.copy().dot(unit_v))
+            self_impulse = unit_v.copy().setMag(self.vel.copy().dot(unit_v))
 
-            tan_beta_alpha = 1 / tan_alpha_beta
-            d_v = g12 / cos(alpha) * (1 - 1 / (1 + tan_beta_alpha))
-            other_loc_diff = other.vel.copy().rotate(PI).setMag(d_v)
+            print('before', self.vel.copy().add(other.vel).mag())
+            self.vel.add(other_impulse)
+            other.vel.add(self_impulse)
+            print(' after', self.vel.copy().add(other.vel).mag())
 
-            new_self_loc = self.loc.copy().add(self_loc_diff)
-            new_other_loc = other.loc.copy().add(other_loc_diff)
+            # stroke(24, 92, 200)
+            # line(self.loc.x, self.loc.y, self.loc.x + ZOOM * new_self_vel.x, self.loc.y + ZOOM * new_self_vel.y)
+            # line(other.loc.x, other.loc.y, other.loc.x + ZOOM * new_other_vel.x, other.loc.y + ZOOM * new_other_vel.y)
+
             stroke(0)
-            line(self.loc.x, self.loc.y, self.loc.x + ZOOM * self_loc_diff.x, self.loc.y + ZOOM * self_loc_diff.y)
-            line(other.loc.x, other.loc.y, other.loc.x + ZOOM * other_loc_diff.x, other.loc.y + ZOOM * other_loc_diff.y)
-
-            impulse_v = PVector.fromAngle(theta)
-            self_impulse = impulse_v.copy().setMag(self.vel.dot(impulse_v))
-            other_impulse = impulse_v.copy().setMag(other.vel.dot(impulse_v))
-            new_self_vel = self.vel.copy().add(other_impulse)
-            new_other_vel = other.vel.copy().add(self_impulse)
-
-            # f_x = other.loc.x - ZOOM * other.vel.x
-            # f_y = other.loc.y - ZOOM * other.vel.y
-            # line(f_x, f_y, f_x + ZOOM * new_other_vel.x, f_y + ZOOM * new_other_vel.y)
-            #
-            stroke(150, 140, 40)
-            line(self.loc.x, self.loc.y, self.loc.x + ZOOM * new_self_vel.x, self.loc.y + ZOOM * new_self_vel.y)
-            line(other.loc.x, other.loc.y, other.loc.x + ZOOM * new_other_vel.x, other.loc.y + ZOOM * new_other_vel.y)
-            print('BALL_SQ_DISTANCE', BALL_SQ_DISTANCE)
-            print('sq_dist', sq_dist)
-            print('theta', degrees(theta))
-            print('alpha', degrees(alpha))
-            print('beta', degrees(beta))
-            print('self.loc', self.loc)
-            print('self_new_loc', new_self_loc)
-            print('other.loc', other.loc)
-            print('other_new_loc', new_other_loc)
-            print('new dist', new_self_loc.dist(new_other_loc))
-            # print('self loc', self.loc)
-            # print('    self vel', self.vel)
-            # print('    self imp', self_impulse)
-            # print('new self vel', new_self_vel)
-            # print('    oth vel', other.vel)
-            # print('    oth imp', other_impulse)
-            # print('new oth vel', new_other_vel)
-            #
-            noLoop()
-            # self.loc = new_self_loc
-            # self.vel = new_self_vel
-            # other.loc = new_other_loc
-            # other.vel = new_other_vel
+            line(other.loc.x, other.loc.y, other.loc.x + ZOOM * self_impulse.x, other.loc.y + ZOOM * self_impulse.y)
+            line(self.loc.x, self.loc.y, self.loc.x + ZOOM * other_impulse.x, self.loc.y + ZOOM * other_impulse.y)
+            # noLoop()
