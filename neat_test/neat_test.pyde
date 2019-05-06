@@ -22,3 +22,21 @@ def draw():
     # print('theta: ', theta)
     # print('  deg: ', degrees(theta))
     # noLoop()
+
+def keyPressed():
+    if keyCode == 0x57:
+        nrunner.new_direction(0, DOWN)
+    if keyCode == 0x41:
+        nrunner.new_direction(0, RIGHT)
+    if keyCode == 0x53:
+        nrunner.new_direction(0, UP)
+    if keyCode == 0x44:
+        nrunner.new_direction(0, LEFT)
+    if keyCode == 0x26:
+        nrunner.new_direction(1, DOWN)
+    if keyCode == 0x25:
+        nrunner.new_direction(1, RIGHT)
+    if keyCode == 0x28:
+        nrunner.new_direction(1, UP)
+    if keyCode == 0x27:
+        nrunner.new_direction(1, LEFT)
